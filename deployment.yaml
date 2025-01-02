@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: deployment
+  labels:
+    app: in-cluster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: in-cluster
+  template:
+    metadata:
+      labels:
+        app: in-cluster
+    spec:
+      containers:
+      - name: in-cluster
+        image: in-cluster:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: 0.5G
+            cpu: 1000m
