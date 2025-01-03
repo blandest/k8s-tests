@@ -18,6 +18,7 @@ limitations under the License.
 package main
 
 import (
+	"os"
 	"context"
 	"fmt"
 	"time"
@@ -35,6 +36,7 @@ import (
 )
 
 func main() {
+	fmt.Printf("DBG: called with %v\n", os.Args)
 	// creates the in-cluster config
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -50,15 +52,21 @@ func main() {
 	for {
 		// get pods in all the namespaces by omitting namespace
 		// Or specify namespace to get pods in particular namespace
-		pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
+		pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{
+			LabelSelector: "app=in-cluster",
+		})
 		if err != nil {
 			fmt.Println("Will panic 2")
 			panic(err.Error())
 		}
 		fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
 
+		fmt.Printf("* %50s | %40s | %40s\n", "Name", "Image", "")
 		for _, pod := range pods.Items {
-			fmt.Printf("* %50s | %40s | %40s WWWWW\n", pod.Name, pod.ObjectMeta.Name, pod.Kind)
+			for i := range pod.Spec.Containers {
+				c := pod.Spec.Containers[i]
+				fmt.Printf("* %50s | %40s | %40s\n", pod.Name, c.Image, c.Args)
+			}
 		}
 
 		/*

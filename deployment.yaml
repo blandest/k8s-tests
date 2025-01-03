@@ -18,9 +18,15 @@ spec:
       containers:
       - name: in-cluster
         image: in-cluster:latest
+        args:
+          - test1
+          - test2
         imagePullPolicy: Never
         ports:
         - containerPort: 80
+        metadata:
+          labels:
+            - in-cluster
         resources:
           limits:
             memory: 0.5G

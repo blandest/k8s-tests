@@ -1,3 +1,3 @@
 FROM debian
 COPY ./k8s /app
-ENTRYPOINT /app
+CMD ["/app", "test1", "test2"]
